@@ -20,4 +20,11 @@ export class PostRepositoryImpl implements PostRepository {
   async findById(id: string): Promise<Post | undefined> {
     return this.posts.find((p) => p.id === id);
   }
+
+  async delete(id: string): Promise<void> {
+    const index = this.posts.findIndex((p) => p.id === id);
+    if (index >= 0) {
+      this.posts.splice(index, 1);
+    }
+  }
 }

@@ -13,6 +13,8 @@ import { SignUpUserController } from "./api/application/use-cases/sign-up-user/s
 import { SignInUserController } from "./api/application/use-cases/sign-in-user/sign-in-user-controller";
 import { CreatePostController } from "./api/application/use-cases/create-post/create-post-controller";
 import { ListPostsController } from "./api/application/use-cases/list-posts/list-posts-controller";
+import { UpdatePostController } from "./api/application/use-cases/update-post/update-post-controller";
+import { DeletePostController } from "./api/application/use-cases/delete-post/delete-post-controller";
 import { createRoutes } from "./api/application/container/routes";
 import { createHealthRoutes } from "./api/application/container/routes/health";
 
@@ -52,6 +54,12 @@ async function bootstrap(): Promise<void> {
   const listPostsController = new ListPostsController(
     useCasesFactory.createListPostsUseCase()
   );
+  const updatePostController = new UpdatePostController(
+    useCasesFactory.createUpdatePostUseCase()
+  );
+  const deletePostController = new DeletePostController(
+    useCasesFactory.createDeletePostUseCase()
+  );
 
   // Rotas
   app.use("/health", createHealthRoutes());
@@ -61,7 +69,9 @@ async function bootstrap(): Promise<void> {
       signUpUserController,
       signInUserController,
       createPostController,
-      listPostsController
+      listPostsController,
+      updatePostController,
+      deletePostController
     )
   );
 
