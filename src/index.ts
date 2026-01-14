@@ -7,6 +7,8 @@ import { Config } from "./config";
 import { logger } from "./logger";
 import { UserRepositoryImpl } from "./api/infraestructure/UserRepositoryImpl";
 import { PostRepositoryImpl } from "./api/infraestructure/PostRepositoryImpl";
+import { LikeRepositoryImpl } from "./api/infraestructure/LikeRepositoryImpl";
+import { CommentRepositoryImpl } from "./api/infraestructure/CommentRepositoryImpl";
 import { AwsS3FileStorage } from "./api/infraestructure/file-storage-impl";
 import { UseCasesFactory } from "./api/application/container/factories/use-cases-factory";
 import { SignUpUserController } from "./api/application/use-cases/sign-up-user/sign-up-user-controller";
@@ -15,6 +17,10 @@ import { CreatePostController } from "./api/application/use-cases/create-post/cr
 import { ListPostsController } from "./api/application/use-cases/list-posts/list-posts-controller";
 import { UpdatePostController } from "./api/application/use-cases/update-post/update-post-controller";
 import { DeletePostController } from "./api/application/use-cases/delete-post/delete-post-controller";
+import { GetPostByIdController } from "./api/application/use-cases/get-post-by-id/get-post-by-id-controller";
+import { ToggleLikeController } from "./api/application/use-cases/toggle-like/toggle-like-controller";
+import { CreateCommentController } from "./api/application/use-cases/create-comment/create-comment-controller";
+import { DeleteCommentController } from "./api/application/use-cases/delete-comment/delete-comment-controller";
 import { createRoutes } from "./api/application/container/routes";
 import { createHealthRoutes } from "./api/application/container/routes/health";
 
@@ -29,6 +35,8 @@ async function bootstrap(): Promise<void> {
   // Repositórios (in-memory)
   const userRepository = new UserRepositoryImpl();
   const postRepository = new PostRepositoryImpl();
+  const likeRepository = new LikeRepositoryImpl();
+  const commentRepository = new CommentRepositoryImpl();
 
   // File Storage (AWS S3)
   const fileStorage = new AwsS3FileStorage();
@@ -37,6 +45,8 @@ async function bootstrap(): Promise<void> {
   const useCasesFactory = new UseCasesFactory(
     userRepository,
     postRepository,
+    likeRepository,
+    commentRepository,
     fileStorage,
     config.jwtSecret
   );
@@ -60,6 +70,18 @@ async function bootstrap(): Promise<void> {
   const deletePostController = new DeletePostController(
     useCasesFactory.createDeletePostUseCase()
   );
+  const getPostByIdController = new GetPostByIdController(
+    useCasesFactory.createGetPostByIdUseCase()
+  );
+  const toggleLikeController = new ToggleLikeController(
+    useCasesFactory.createToggleLikeUseCase()
+  );
+  const createCommentController = new CreateCommentController(
+    useCasesFactory.createCreateCommentUseCase()
+  );
+  const deleteCommentController = new DeleteCommentController(
+    useCasesFactory.createDeleteCommentUseCase()
+  );
 
   // Rotas
   app.use("/health", createHealthRoutes());
@@ -71,7 +93,11 @@ async function bootstrap(): Promise<void> {
       createPostController,
       listPostsController,
       updatePostController,
-      deletePostController
+      deletePostController,
+      getPostByIdController,
+      toggleLikeController,
+      createCommentController,
+      deleteCommentController
     )
   );
 
