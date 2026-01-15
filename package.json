@@ -7,7 +7,12 @@
     "test": "vitest",
     "prepare": "husky install",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "prisma:push": "prisma db push"
   },
   "keywords": [],
   "author": "",

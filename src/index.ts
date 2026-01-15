@@ -5,10 +5,10 @@ import express from "express";
 import cors from "cors";
 import { Config } from "./config";
 import { logger } from "./logger";
-import { UserRepositoryImpl } from "./api/infraestructure/UserRepositoryImpl";
-import { PostRepositoryImpl } from "./api/infraestructure/PostRepositoryImpl";
-import { LikeRepositoryImpl } from "./api/infraestructure/LikeRepositoryImpl";
-import { CommentRepositoryImpl } from "./api/infraestructure/CommentRepositoryImpl";
+import { UserRepositoryPrismaImpl } from "./api/infraestructure/UserRepositoryPrismaImpl";
+import { PostRepositoryPrismaImpl } from "./api/infraestructure/PostRepositoryPrismaImpl";
+import { LikeRepositoryPrismaImpl } from "./api/infraestructure/LikeRepositoryPrismaImpl";
+import { CommentRepositoryPrismaImpl } from "./api/infraestructure/CommentRepositoryPrismaImpl";
 import { AwsS3FileStorage } from "./api/infraestructure/file-storage-impl";
 import { UseCasesFactory } from "./api/application/container/factories/use-cases-factory";
 import { SignUpUserController } from "./api/application/use-cases/sign-up-user/sign-up-user-controller";
@@ -33,11 +33,11 @@ async function bootstrap(): Promise<void> {
   app.use(cors());
   app.use(express.json());
 
-  // Repositórios (in-memory)
-  const userRepository = new UserRepositoryImpl();
-  const postRepository = new PostRepositoryImpl();
-  const likeRepository = new LikeRepositoryImpl();
-  const commentRepository = new CommentRepositoryImpl();
+  // Repositórios (Prisma - produção)
+  const userRepository = new UserRepositoryPrismaImpl();
+  const postRepository = new PostRepositoryPrismaImpl();
+  const likeRepository = new LikeRepositoryPrismaImpl();
+  const commentRepository = new CommentRepositoryPrismaImpl();
 
   // File Storage (AWS S3)
   const fileStorage = new AwsS3FileStorage();

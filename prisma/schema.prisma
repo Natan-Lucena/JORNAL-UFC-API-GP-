@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  posts    Post[]
+  likes    Like[]
+  comments Comment[]
+
+  @@map("users")
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  title     String
+  subtitle  String
+  body      String   @db.Text
+  tag       String
+  media     String
+  category  Category @default(GRADUACAO)
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes    Like[]
+  comments Comment[]
+
+  @@map("posts")
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@map("likes")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String   @db.Text
+  userId    String   @map("user_id")
+  postId    String   @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+  TEACHER
+
+  @@map("role")
+}
+
+enum Category {
+  GRADUACAO
+  EXTENSAO
+  PESQUISA
+  EVENTOS
+
+  @@map("category")
+}
