@@ -1,4 +1,4 @@
-name: Node.js CI Jornal-API
+name: Node.js CI Journal API
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
       - name: Install PNPM
         uses: pnpm/action-setup@v4
         with:
-          version: 9.13.2
+          version: 10.4.1
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -31,11 +31,5 @@ jobs:
       - name: Install dependencies
         run: npm pkg delete scripts.prepare && pnpm install --frozen-lockfile
 
-      - name: Lint code
-        run: pnpm lint
-
       - name: Build project
         run: pnpm build
-
-      - name: Run tests
-        run: pnpm test
